@@ -6,7 +6,24 @@ First of all, you'll need to download the nodes into a given folder in your serv
 
 The application runs under Apache2 and PHP7+
 
-## Installation of OpenVPN files
+## Purpose
+If you have a server or a Linux PC running as a router (for instance with Ubuntu 22.04 LTS), you can set your LAN network as it follows:
+
+Internet ----- Router/VPN ----- Router/iptables ----- Router/LAN
+							|- Device 1
+       							|- Device 2
+	      						|-- ....
+
+This will make that all the devices connected to the LAN network will pass through the VPN.
+In such case, it is really practical to be able to setup a Web interface that allows to:
+
+1. Select a pair of nodes
+2. Start the VPN connection
+3. Stop the VPN connection
+
+Obviously, your Web app should be accessible ONLY from yout LAN network.
+
+## Installation
 
 Prior to install the Web application, you will need:
 - To install openvpn in your server.
@@ -75,5 +92,61 @@ $sudo nano /etc/systemd/system/protonvpn@.service
 ``` 
 
 10. That's all, folks! Now we can deploy the Web app RubioVPN
+
+## Deploy the RubioVPN
+
+Download and unzip the RubioVPN connect into the folder of your choice.
+Please remind that you allowed Apache2 to execute the wrapper at a given path /path/to/your/site.
+
+In this example, RubioVPN is deployed in **/path/to/your/site**
+
+Obviously, the folder should be the same that you defined in the previous step of the Installation.
+
+## Setting Apache2 website
+
+Apache2 has to be installed at your server as a Web server. Then you can add a subfolder that will point to RubioVPN
+
+An example of configuration
+```
+#--------------------------------------------------------------------
+# RubioVPN - Based on OpenVPN and ProtonVPN
+#--------------------------------------------------------------------
+Alias "/vpn" "/path/to/your/site/"
+<Directory "/path/to/your/site/">    
+    DirectoryIndex index.php index.html
+    Options +FollowSymLinks +MultiViews -Indexes
+    AllowOverride All
+    Require all granted
+
+    #Restrict via IP address    
+    Order deny,allow
+    Deny from all
+    Allow from 192.168.1.0/24
+            
+    <FilesMatch "\.php$">
+        SetHandler "proxy:unix:/run/php/php8.1-fpm.sock|fcgi://localhost/"
+    </FilesMatch>
+</Directory>
+```
+Notice that this site will be available only for clients within the network *192.168.1.0/24*.
+You can change this for the LAN address of your choice.
+
+It is also recommended to **protect the access to this site by setting a .htaccess** with a password access. To do so, you only have to:
+
+1. Create a **.htpasswd** file in a secured path of your server that cannot be accessible by a client, for instance, /etc/apache2
+
+```
+$sudo htpasswd -c /etc/apache2/.htpasswd {username}
+```
+NOTE: Replace {username} by a name of your choice, then enter a password.
+   
+3. Create a **.htaccess** file at the root folder of your site.
+```
+AuthUserFile /etc/apache2/.htpasswd
+AuthType Basic
+AuthName "Restricted area"
+require valid-user
+```
+Your application is now ready to work at http://<server_local_ip>/vpn
 
 
