@@ -23,8 +23,9 @@ Obviously, your Web app should be accessible ONLY from yout LAN network.
 ## Installation
 
 Prior to install the Web application, you will need:
-- To install openvpn in your server.
-- To subscribe an OpenVPN plan
+
+a. To install openvpn in your server.
+b. To subscribe an OpenVPN plan
 
 ```
 $ sudo apt install openvpn
@@ -45,10 +46,12 @@ To do so, edit the file sudoers
 3. Download from ProtonVPN the ZIP file that contains the .ovpn files (e.g. ovpn.zip), then unzip them in a subdirectory in /etc/openvpn/ovpn
 
 4. Go to the ovpn directory. Now we need to update each .ovpn file. So, we create a script to change link the auth-user-pass to a given file
+
 ```
 $cd ovpn
 $sudo nano update.sh
 ```    
+
 5. Copy & Paste the script
 ```
 #!/bin/bash
@@ -62,35 +65,43 @@ do
 done
 ```
 6. Execute the update script
+   
 ```
 $sudo bash ./update.sh
 ```   
 Now the directory /etc/openvpn/ovpn contains the configuration files (*.conf) that will be sued in openvpn, having a, authentication refered to a file named ".secrets"
+
 7. Creates a new file named ".secrets" (without quotes) inside the directory /etc/openvpn.
 
 ```
 $cd /etc/openvpn
 $sudo nano .secrets
+``` 
 
+8. Write in the user and password in 2 lines. You'll find user/password in your account [ProtonVPN](https://account.protonvpn.com/account)
+
+``` 
 <user>
 <password>
 ```   
-Write in the user and password in 2 lines. You'll find user/password in your account [ProtonVPN](https://account.protonvpn.com/account)
-    
+
 8. Now we have to create a service to enable/disable customized a openvpn service. To do so, we need to adapt the existing service to our paths
-The file that contains the original service (from openvpn package) is located in: /lib/systemd/system/openvpn@.service
+The file that contains the original service (from openvpn package) is located in: */lib/systemd/system/openvpn@.service*
+
 ```     
 $sudo cp /lib/systemd/system/openvpn@.service /etc/systemd/system/protonvpn@.service
 $sudo nano /etc/systemd/system/protonvpn@.service
-```     
+```
+
 9. Modify the path of the configuration file. Find the line starting by "ExecStart=/usr/sbin/openvpn" and find the path to the config. Customize it
+
 ``` 
-	--config /etc/openvpn/ovpn/%i.conf
+--config /etc/openvpn/ovpn/%i.conf
 ``` 
 
 10. That's all, folks! Now we can deploy the Web app RubioVPN
 
-## Deploy the RubioVPN
+## Deploying RubioVPN
 
 Download and unzip the RubioVPN connect into the folder of your choice.
 Please remind that you allowed Apache2 to execute the wrapper at a given path /path/to/your/site.
@@ -99,11 +110,12 @@ In this example, RubioVPN is deployed in **/path/to/your/site**
 
 Obviously, the folder should be the same that you defined in the previous step of the Installation.
 
-## Setting Apache2 website
+## Setting the Apache2 website
 
 Apache2 has to be installed at your server as a Web server. Then you can add a subfolder that will point to RubioVPN
 
-An example of configuration
+An example of site configuration:
+
 ```
 #--------------------------------------------------------------------
 # RubioVPN - Based on OpenVPN and ProtonVPN
@@ -125,6 +137,7 @@ Alias "/vpn" "/path/to/your/site/"
     </FilesMatch>
 </Directory>
 ```
+
 Notice that this site will be available only for clients within the network *192.168.1.0/24*.
 You can change this for the LAN address of your choice.
 
@@ -145,5 +158,3 @@ AuthName "Restricted area"
 require valid-user
 ```
 Your application is now ready to work at http://<server_local_ip>/vpn
-
-
