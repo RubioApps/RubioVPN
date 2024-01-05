@@ -26,7 +26,7 @@ To do so, edit the file sudoers
 2. Go to User Alias and add www-data as super user allowed to execute the specific file "exec-wrapper"
 
 ```	
-	www-data ALL=NOPASSWD: /path/to/your/site/exec-wrapper
+	www-data ALL=NOPASSWD: /path/to/your/site/.exec-wrapper
 ```
 3. Download from ProtonVPN the ZIP file that contains the .ovpn files (e.g. ovpn.zip), then unzip them in a subdirectory in /etc/openvpn/ovpn
 
