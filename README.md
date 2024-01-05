@@ -9,10 +9,7 @@ The application runs under Apache2 and PHP7+
 ## Purpose
 If you have a server or a Linux PC running as a router (for instance with Ubuntu 22.04 LTS), you can set your LAN network as it follows:
 
-Internet ----- Router/VPN ----- Router/iptables ----- Router/LAN
-							|- Device 1
-       							|- Device 2
-	      						|-- ....
+Internet <=> Router/VPN <=> Router/iptables <=> Router/LAN <=> Any device
 
 This will make that all the devices connected to the LAN network will pass through the VPN.
 In such case, it is really practical to be able to setup a Web interface that allows to:
