@@ -37,13 +37,13 @@ Now you can start the customization.
 1. Allow the Apache2 user (www-data) to execute a specific file.
 To do so, edit the file sudoers
 ```
-	$sudo nano /etc/sudoers
+$sudo nano /etc/sudoers
 ```
 
 2. Go to User Alias and add www-data as super user allowed to execute the specific file "exec-wrapper"
 
 ```	
-	www-data ALL=NOPASSWD: /path/to/your/site/.exec-wrapper
+www-data ALL=NOPASSWD: /path/to/your/site/.exec-wrapper
 ```
 
 3. Download from ProtonVPN the ZIP file that contains the .ovpn files (e.g. ovpn.zip), then unzip them in a subdirectory in /etc/openvpn/ovpn
